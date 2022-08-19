@@ -42,14 +42,16 @@ class ListProductFragment : Fragment(R.layout.fragment_list_product) {
 
     }
 
+    /**
+     * Returns a list of product
+     */
     private fun fetchList() {
         viewModel.getProductList()
     }
 
     /**
-     * For navigation from one List Fragment to Add new product fragment
+     * For initializing all the user interactive elements
      */
-
     private fun setUpListeners() {
 
         binding.extendedFab.setOnClickListener{
@@ -59,12 +61,11 @@ class ListProductFragment : Fragment(R.layout.fragment_list_product) {
 
     }
 
+    /**
+     * We observe the data to populate the recycler view and Make the visibility of the progress bar gone.
+     */
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpObserver() {
-
-        /**
-         * We observe the data to populate the recycler view and Make the visibility of the progress bar gone.
-         */
         viewModel.productList.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {

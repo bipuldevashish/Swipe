@@ -36,6 +36,9 @@ class ImageAdapter(
 
         private val imageView = view.findViewById<ImageView>(R.id.imageView)
 
+        /**
+         * Bind the bitmap to the imageview
+         */
         fun bind(item: Bitmap){
             imageView.setImageBitmap(item)
         }

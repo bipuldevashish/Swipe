@@ -1,7 +1,7 @@
 package com.bipuldevashish.swipe.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -35,9 +35,9 @@ class AddProductFragment : Fragment(R.layout.fragment_add_product) {
     private var productType: String? = null
     private var images: ArrayList<Uri> = ArrayList()
 
-    private var PICK_IMAGE_MULTIPLE = 1
-    lateinit var imagePath: String
-    var imagesPathList: MutableList<String> = arrayListOf()
+    private val PICK_IMAGE_MULTIPLE = 1
+    private lateinit var imagePath: String
+    private var imagesPathList: MutableList<String> = arrayListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -132,6 +132,7 @@ class AddProductFragment : Fragment(R.layout.fragment_add_product) {
 
     /**
      * Implements radio button click functionality
+     * @param checkedId id of the checked radio button
      */
     private fun findRadioButton(checkedId: Int) {
         when (checkedId) {
@@ -150,14 +151,13 @@ class AddProductFragment : Fragment(R.layout.fragment_add_product) {
     /**
      * method to call api to upload files to server
      */
-
     private fun uploadToServer() {
 
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
-        builder.addFormDataPart("product_name", binding.etProductName.text.toString(),)
+        builder.addFormDataPart("product_name", binding.etProductName.text.toString())
         builder.addFormDataPart("product_type", productType.toString())
-        builder.addFormDataPart("price", binding.etSellingPrice.text.toString(),)
+        builder.addFormDataPart("price", binding.etSellingPrice.text.toString())
         builder.addFormDataPart("tax", binding.etTaxAmount.text.toString())
 
         for (i in 0 until imagesPathList.size) {
@@ -173,32 +173,9 @@ class AddProductFragment : Fragment(R.layout.fragment_add_product) {
         viewModel.addProduct(requestBody)
     }
 
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        super.onActivityResult(requestCode, resultCode, data)
-        // When an Image is picked
-        if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == RESULT_OK
-            && null != data
-        ) {
-            if (data.clipData != null) {
-                val count = data.clipData!!.itemCount
-                for (i in 0 until count) {
-                    val imageUri: Uri = data.clipData!!.getItemAt(i).uri
-                    images.add(imageUri)
-                    getPathFromURI(imageUri)
-                }
-            } else if (data.data != null) {
-                val uri = data.data
-                if (uri != null) {
-                    images.add(uri)
-                }
-                val imagePath: String = data.data!!.path!!
-            }
-            displayImageData()
-        }
-    }
-
+    /**
+     * Refresh the ui after selecting images from gallery
+     */
     private fun displayImageData() {
 
         binding.cardBtnAdd.visibility = View.GONE
@@ -217,6 +194,10 @@ class AddProductFragment : Fragment(R.layout.fragment_add_product) {
         }
     }
 
+    /**
+     * Returns complete path from uri
+     * @param uri
+     */
     private fun getPathFromURI(uri: Uri) {
         val path: String = uri.path!! // uri = any content Uri
 
@@ -254,6 +235,32 @@ class AddProductFragment : Fragment(R.layout.fragment_add_product) {
             cursor?.close()
         } catch (e: Exception) {
             Log.e("TAG", e.message, e)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        super.onActivityResult(requestCode, resultCode, data)
+        // When an Image is picked
+        if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == Activity.RESULT_OK
+            && null != data
+        ) {
+            if (data.clipData != null) {
+                val count = data.clipData!!.itemCount
+                for (i in 0 until count) {
+                    val imageUri: Uri = data.clipData!!.getItemAt(i).uri
+                    images.add(imageUri)
+                    getPathFromURI(imageUri)
+                }
+            } else if (data.data != null) {
+                val uri = data.data
+                if (uri != null) {
+                    images.add(uri)
+                }
+                val imagePath: String = data.data!!.path!!
+            }
+            displayImageData()
         }
     }
 

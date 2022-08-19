@@ -23,6 +23,9 @@ class ProductListAdaptor(var items: List<ProductItem>, val context: Context) :
         private val productPrice = itemView.findViewById<TextView>(R.id.tv_price)
         private val productTax = itemView.findViewById<TextView>(R.id.tv_tax)
 
+        /**
+         * Binds data with the ui
+         */
         fun bind(item: ProductItem) {
             productName.text = item.product_name
             productType.text = item.product_type

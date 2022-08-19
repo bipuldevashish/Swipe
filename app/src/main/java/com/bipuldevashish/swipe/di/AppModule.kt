@@ -13,6 +13,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
 
+    /**
+     * Single instance of retrofit
+     * retrofit instance injection
+     */
     single {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -21,9 +25,17 @@ val appModule = module {
             .create(ApiService::class.java)
     }
 
+    /**
+     * Single instance of repository
+     * repository injection
+     */
     single<Repository> {
         RepositoryImpl(get())
     }
+
+    /**
+     * ViewModel injection
+     */
 
     viewModel {
         MainActivityViewModel(get())
